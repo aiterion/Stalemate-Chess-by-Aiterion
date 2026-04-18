@@ -1001,7 +1001,15 @@ function setupConn() {
 function createGame() {
   cancelMp();
   const roomId = Math.random().toString(36).slice(2, 8).toUpperCase();
-  peer = new Peer(roomId);
+  peer = new Peer(roomId, {
+  config: {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:global.stun.twilio.com:3478' }
+    ]
+  }
+});
 
   peer.on('open', id => {
     myColor = 'w';
@@ -1027,7 +1035,15 @@ function joinGame() {
   if (!id) return;
 
   cancelMp();
-  peer = new Peer();
+  peer = new Peer(roomId, {
+  config: {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:global.stun.twilio.com:3478' }
+    ]
+  }
+});
 
   peer.on('open', () => {
     myColor = 'b';
