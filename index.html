@@ -1035,15 +1035,29 @@ function joinGame() {
   if (!id) return;
 
   cancelMp();
-  peer = new Peer(roomId, {
-  config: {
-    iceServers: [
-      { urls: 'stun:stun.l.google.com:19302' },
-      { urls: 'stun:stun1.l.google.com:19302' },
-      { urls: 'stun:global.stun.twilio.com:3478' }
-    ]
-  }
-});
+  peer = new Peer(undefined, {
+    config: {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:global.stun.twilio.com:3478' }
+      ]
+    }
+  });
+
+  peer.on('open', () => {
+    myColor = 'b';
+    conn    = peer.connect(id, { reliable: true });
+    setMpUI('joining', id);
+    setupConn();
+  });
+
+  peer.on('error', e => {
+    const msg = e.type === 'peer-unavailable' ? `комната "${id}" не найдена` : e.type;
+    setMpUI('error', msg);
+    peer = null; myColor = null;
+  });
+}
 
   peer.on('open', () => {
     myColor = 'b';
