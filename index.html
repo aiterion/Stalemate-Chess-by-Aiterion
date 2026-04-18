@@ -865,7 +865,29 @@ function flipBoard() {
   buildBoard();
   render();
 }
+function resign() {
+  if (over) return;
+  if (!confirm('Вы уверены, что хотите сдаться?')) return;
 
+  // Кто сдаётся — определяем цвет
+  let loser;
+  if (myColor) {
+    // В онлайн-игре сдаётся текущий игрок
+    loser = myColor;
+  } else {
+    // В локальной игре сдаётся тот, чей сейчас ход
+    loser = game.turn();
+  }
+
+  const winner = loser === 'w' ? 'b' : 'w';
+
+  // Если онлайн — уведомить соперника
+  if (conn?.open) {
+    conn.send({ type: 'resign', loser: loser });
+  }
+
+  endGame(winner, 'resign');
+}
 // ─── Multiplayer ───────────────────────────────────────────────────
 
 function setMpUI(state, info) {
